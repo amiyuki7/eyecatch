@@ -13,11 +13,8 @@ struct Cli {
 
 #[derive(Subcommand, Debug)]
 enum Commands {
-    /// Add a new item to the TODO list
     Add { item: String },
-    /// Delete an item from the TODO list
-    Delete { idx: u32 },
-    /// Displays the TODO list
+    Delete { idx: String },
     List,
 }
 
@@ -30,8 +27,8 @@ fn main() -> Result<(), Box<dyn::std::error::Error>> {
     let cli = Cli::parse();
 
     match &cli.command {
-        Commands::Delete { idx } => {}
         Commands::Add { item } => items.push(Item::new(item.into(), ids)),
+        Commands::Delete { idx } => items.retain(|item| &item.id != idx),
         Commands::List => {}
     }
 
