@@ -25,12 +25,13 @@ fn main() -> Result<(), Box<dyn::std::error::Error>> {
     verify()?;
 
     let mut items = deserialize()?;
+    let ids: Vec<String> = items.iter().map(|item| item.id.clone()).collect();
 
     let cli = Cli::parse();
 
     match &cli.command {
-        Commands::Add { item } => items.push(Item::new(item.into())),
         Commands::Delete { idx } => {}
+        Commands::Add { item } => items.push(Item::new(item.into(), ids)),
         Commands::List => {}
     }
 

@@ -30,23 +30,32 @@ pub fn verify() -> Result<(), Box<dyn Error>> {
 
 #[derive(Serialize, Deserialize, Debug)]
 pub struct Item {
-    id: String,
-    content: String,
+    pub id: String,
+    pub content: String,
 }
 
 impl Item {
-    pub fn new(content: String) -> Self {
+    pub fn new(content: String, existing_ids: Vec<String>) -> Self {
         Self {
-            id: Self::get_id(),
+            id: Self::get_id(existing_ids),
             content,
         }
     }
 
-    fn get_id() -> String {
-        nanoid!(
+    fn get_id(existing_ids: Vec<String>) -> String {
+        let mut id = nanoid!(
             3,
             &['1', '2', '3', '4', '5', '6', '7', '8', '9', '0', 'a', 'b', 'c', 'd', 'e', 'f']
-        )
+        );
+
+        while existing_ids.contains(&id) {
+            id = nanoid!(
+                3,
+                &['1', '2', '3', '4', '5', '6', '7', '8', '9', '0', 'a', 'b', 'c', 'd', 'e', 'f']
+            );
+        }
+
+        id
     }
 }
 
