@@ -29,12 +29,10 @@ fn main() -> Result<(), Box<dyn::std::error::Error>> {
     match &cli.command {
         Commands::Add { item } => items.push(Item::new(item.into(), ids)),
         Commands::Delete { idx } => items.retain(|item| &item.id != idx),
-        Commands::List => {}
+        Commands::List => list(&items),
     }
 
-    println!("{cli:?}");
-
-    serialize(items);
+    serialize(items)?;
 
     Ok(())
 }

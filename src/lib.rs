@@ -1,3 +1,4 @@
+use colored::Colorize;
 use nanoid::nanoid;
 use serde::{Deserialize, Serialize};
 use std::error::Error;
@@ -57,6 +58,36 @@ impl Item {
 
         id
     }
+}
+
+impl std::fmt::Display for Item {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "   {}  |  {}", self.id.bold().magenta(), self.content)
+    }
+}
+
+pub fn list(items: &[Item]) {
+    if items.is_empty() {
+        return;
+    }
+
+    let longest = items
+        .iter()
+        .max_by_key(|item| item.content.len())
+        .unwrap()
+        .content
+        .len();
+
+    println!(
+        "\n   {}  |  {}
++-------+--{}--+",
+        "uid".bold().yellow(),
+        "content".bold().yellow(),
+        "-".repeat(longest)
+    );
+
+    items.iter().for_each(|item| println!("{item}"));
+    println!();
 }
 
 pub fn deserialize() -> Result<Vec<Item>, Box<dyn Error>> {
