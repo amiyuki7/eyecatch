@@ -1,4 +1,3 @@
-use colored::Colorize;
 use nanoid::nanoid;
 use serde::{Deserialize, Serialize};
 use std::error::Error;
@@ -62,7 +61,15 @@ impl Item {
 
 impl std::fmt::Display for Item {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        write!(f, "   {}  |  {}", self.id.bold().magenta(), self.content)
+        // 35 - Magenta
+        // 1 - Bold
+        // 0 - Reset
+
+        write!(
+            f,
+            "   \x1B[35m\x1B[1m{}\x1B[0m  |  {}",
+            self.id, self.content
+        )
     }
 }
 
@@ -78,11 +85,14 @@ pub fn list(items: &[Item]) {
         .content
         .len();
 
+    // 33 - Yellow
+    // 1 - Bold
+    // 0 - Reset
+
     println!(
-        "\n   {}  |  {}
+        "\n
+\x1B[33m\x1b[1m   uid\x1b[0m  |  \x1b[33m\x1b[1mcontent\x1b[0m
 +-------+--{}--+",
-        "uid".bold().yellow(),
-        "content".bold().yellow(),
         "-".repeat(longest)
     );
 
