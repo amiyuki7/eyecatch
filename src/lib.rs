@@ -28,6 +28,20 @@ pub fn verify() -> Result<(), Box<dyn Error>> {
     Ok(())
 }
 
+struct HexStyles<'a> {
+    magenta: &'a str,
+    yellow: &'a str,
+    bold: &'a str,
+    reset: &'a str,
+}
+
+const HEX_STYLES: HexStyles = HexStyles {
+    magenta: "\x1B[35m",
+    yellow: "\x1B[33m",
+    bold: "\x1B[1m",
+    reset: "\x1B[0m",
+};
+
 #[derive(Serialize, Deserialize, Debug)]
 pub struct Item {
     pub id: String,
@@ -61,15 +75,12 @@ impl Item {
 
 impl std::fmt::Display for Item {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        // 35 - Magenta
-        // 1 - Bold
-        // 0 - Reset
+        let injected = format!(
+            "   {0}{1}{2}{3}  |  {4}",
+            HEX_STYLES.magenta, HEX_STYLES.bold, self.id, HEX_STYLES.reset, self.content
+        );
 
-        write!(
-            f,
-            "   \x1B[35m\x1B[1m{}\x1B[0m  |  {}",
-            self.id, self.content
-        )
+        write!(f, "{injected}")
     }
 }
 
@@ -85,16 +96,16 @@ pub fn list(items: &[Item]) {
         .content
         .len();
 
-    // 33 - Yellow
-    // 1 - Bold
-    // 0 - Reset
-
-    println!(
-        "\n
-\x1B[33m\x1b[1m   uid\x1b[0m  |  \x1b[33m\x1b[1mcontent\x1b[0m
-+-------+--{}--+",
+    let injected = format!(
+        "\n{0}{1}   uid{2}  |  {0}{1}content{2}
++-------+--{3}--+",
+        HEX_STYLES.yellow,
+        HEX_STYLES.bold,
+        HEX_STYLES.reset,
         "-".repeat(longest)
     );
+
+    println!("{injected}");
 
     items.iter().for_each(|item| println!("{item}"));
     println!();
